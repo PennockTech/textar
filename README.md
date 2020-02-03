@@ -293,7 +293,12 @@ Values of `type`:
 * `"directory"`: there should be no actual content for this type; there may be
   attributes of various kinds, including ACLs and xattrs, as well as
   permissions.
-* `"symlink"`: plaintext content is the filename to link to.
+* `"symlink"`: either of two formats:
+  + plaintext content is the filename to link to.
+  + if `jsonline` is set, then the object should have one key, `to`, the
+    value of which must be a string to link to
+  + if the value of the symlink needs to contain embedded newlines, use the
+    `jsonline` form.
 * Values containing a SOLIDUS (`/`, 0x2F) are reserved to indicate a MIME type
   which affects how the file should be extracted.
 * Other values should not typically be implemented, but might be of use for
@@ -311,6 +316,11 @@ cloud-init MIME type, and which tools receive some directives.
 A top-level MIME type of `signature` is hereby defined to exist in the context
 of textar files and indicates extra verification may be performed.
 
+FIXME TODO:
+> Should we have a feature which, for symlinks, expands a dictionary of
+> variables in the target, using a "standard" dictionary?  Or allowing
+> env-vars?  That would let an archive extraction auto-link for the current
+> platform without needing scripting.
 
 #### Validation of metadata
 
@@ -433,7 +443,10 @@ IGxvb2sgdG9vIGdvb2QsIG5vciB0YWxrIHRvbyB3aXNlOgo=
 {"filename":"too","type":"symlink"}
 Xfoo
 
-{"filename":"x.json","type":"jsonmulti"}
+{"filename":"special-link","type":"symlink","jsonline":true}
+{"to": "knock knock\nwho's there?\nsymlink\nsymlink who?\nseemed like a good idea at the time\n"}
+
+{"filename":"x.json","jsonmulti":true}
 {
   "letters": [
     "alpha",
