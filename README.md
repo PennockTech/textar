@@ -27,6 +27,7 @@ stay compatible and work with us if incompatible changes are needed.
 
 * Tools
 * File Format
+* Examples
 * Inspiration
 
 
@@ -408,6 +409,31 @@ requirements.
   compatible with minisign(1) signatures (unless pre-hashed, but that is for
   large files and so not aligned with textar usage, right?).
 
+
+## Examples
+
+File `foo.textar`:
+
+```
+{"format":"textar/1"}
+{"filename":"foo"}
+XThe first line of text.
+XA second line.
+X
+XThis is the fourth line, the third line was empty.
+
+{"filename":"bar","base64":true}
+SWYgeW91IGNhbiBrZWVwIHlvdXIgaGVhZCB3aGVuIGFsbCBhYm91dCB5b3UKICAgIEFyZSBsb3Np
+bmcgdGhlaXJzIGFuZCBibGFtaW5nIGl0IG9uIHlvdSwKSWYgeW91IGNhbiB0cnVzdCB5b3Vyc2Vs
+ZiB3aGVuIGFsbCBtZW4gZG91YnQgeW91LAogICAgQnV0IG1ha2UgYWxsb3dhbmNlIGZvciB0aGVp
+ciBkb3VidGluZyB0b287CklmIHlvdSBjYW4gd2FpdCBhbmQgbm90IGJlIHRpcmVkIGJ5IHdhaXRp
+bmcsCiAgICBPciBiZWluZyBsaWVkIGFib3V0LCBkb27igJl0IGRlYWwgaW4gbGllcywKT3IgYmVp
+bmcgaGF0ZWQsIGRvbuKAmXQgZ2l2ZSB3YXkgdG8gaGF0aW5nLAogICAgQW5kIHlldCBkb27igJl0
+IGxvb2sgdG9vIGdvb2QsIG5vciB0YWxrIHRvbyB3aXNlOgo=
+
+```
+
+More complex examples TBD.
 
 
 ## Inspiration
