@@ -351,6 +351,10 @@ symbolic link: the keys of symbolic links themselves must be absolute and not
 rely upon links.  Extractors may freely re-order symbolic links, or reject
 them entirely.
 
+Extractors SHOULD default to refusing to extract files with suspicious names,
+such as those containing US-ASCII ESC (0x1B, `\e`).  Note that what's
+suspicious might change depending upon character set.
+
 The `owner` array, if present, must have at least one entry, the file owner.
 This should be portable.  On Unix systems, a second entry in the array should
 be interpreted as a group.  If the first entry in the array is `null` or an
@@ -398,9 +402,14 @@ is that use of `signature` top-level indicates to textar processors that they
 MAY use this entry to verify some other entry.  Such entries should typically
 still be extracted as regular files too.
 
-FIXME: how about a final entry with `{"filename":".","type":"signature/foo"}`
-as a signature over "everything before this entry"?  Or allowing this one
-filename to be repeated, to allow for appending and re-signing?
+FIXME:
+> how about a final entry with `{"filename":".","type":"signature/foo"}`
+> as a signature over "everything before this entry"?  Or allowing this one
+> filename to be repeated, to allow for appending and re-signing?
+
+FIXME:
+> What awareness is needed of filesystem character sets vs textar character
+> sets?
 
 #### Signature MIME namespace
 
@@ -494,7 +503,37 @@ wanted to be able to embed the output of `jq .` as a blob, unmodified, and
 pipe entries through jq(1) freely.  The requirement of `jsonmulti` for all
 intermediate lines to be indented is designed to allow this.
 
+
+### Extraction
+
+The file format has nothing to say about what flags must be supported by what
+tools, but our tools will aim for "typical Unix long-opts flag-handling".  I
+intend to bias more towards the flexibility of pax(1) than towards
+compatibility with tar(1).
+
+Note though that the design of textar very deliberately is such that if you
+want to extract one file from the archive and don't want to figure out arcane
+command-line flags, then you can open the `.textar` file up in a text viewer
+or text editor and copy/paste the contents out.  It's crude, but it's _fast_
+for ad-hoc usage and it should be reliable.
+
+
+### Execution
+
 The support of MIME types as a file type is for a vague notion of cloud-init
 or desktop MIME dispatch.  To avoid ambiguity or frivolous usage, this
 specification is explicit that such entries should NOT be extracted as regular
 files.
+
+Textar tools will not default to executing content from an archive; but
+textar's format is designed so that a client tool can make an assertion such
+as:
+
+> Files with `type="application/x-foo"`, if accompanied by an entry of
+> `type="signature/signify"` made by one of keys X, Y or Z, and if that
+> signature is valid, will be fed as input to the "foo" command.
+
+Some tools might be a lot more permissive in what they'll execute.  But the
+library default, and main tools shipped, will never execute content from
+scripts.  The default is caution, while letting folks build system
+initialization files if need be.
