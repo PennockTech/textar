@@ -465,5 +465,5 @@ lines to be indented is designed to allow this.
 
 The support of MIME types as a file type is for a vague notion of cloud-init
 or desktop MIME dispatch.  To avoid ambiguity or frivolous usage, this
-specification is explicit that such entries should be extracted as regular
+specification is explicit that such entries should NOT be extracted as regular
 files.
