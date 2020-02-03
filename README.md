@@ -293,8 +293,7 @@ Values of `type`:
 * `"directory"`: there should be no actual content for this type; there may be
   attributes of various kinds, including ACLs and xattrs, as well as
   permissions.
-* `"symlink"`: SHOULD be paired with `"jsonline": true`; content is expected
-  to have two keys: `linkname` and `target`.
+* `"symlink"`: plaintext content is the filename to link to.
 * Values containing a SOLIDUS (`/`, 0x2F) are reserved to indicate a MIME type
   which affects how the file should be extracted.
 * Other values should not typically be implemented, but might be of use for
@@ -431,6 +430,24 @@ bmcsCiAgICBPciBiZWluZyBsaWVkIGFib3V0LCBkb27igJl0IGRlYWwgaW4gbGllcywKT3IgYmVp
 bmcgaGF0ZWQsIGRvbuKAmXQgZ2l2ZSB3YXkgdG8gaGF0aW5nLAogICAgQW5kIHlldCBkb27igJl0
 IGxvb2sgdG9vIGdvb2QsIG5vciB0YWxrIHRvbyB3aXNlOgo=
 
+{"filename":"too","type":"symlink"}
+Xfoo
+
+{"filename":"x.json","type":"jsonmulti"}
+{
+  "letters": [
+    "alpha",
+    "beta",
+    "gamma",
+    "delta"
+  ],
+  "numbers": [
+    "one",
+    "two",
+    "three"
+  ]
+}
+
 ```
 
 More complex examples TBD.
@@ -458,10 +475,11 @@ To support arbitrary edits and later extraction, I decided to keep lengths out
 of the headers.  An optional final section can be an index, to be recreated as
 needed.
 
-The support for JSON came in when I considered symlinks.  And then I wanted to
-be able to embed the output of `jq .` as a blob, unmodified, and pipe entries
-through jq(1) freely.  The requirement of `jsonmulti` for all intermediate
-lines to be indented is designed to allow this.
+The support for JSON came in when I considered symlinks, before realizing that
+I already had the filename and these were simpler than expected.  And then I
+wanted to be able to embed the output of `jq .` as a blob, unmodified, and
+pipe entries through jq(1) freely.  The requirement of `jsonmulti` for all
+intermediate lines to be indented is designed to allow this.
 
 The support of MIME types as a file type is for a vague notion of cloud-init
 or desktop MIME dispatch.  To avoid ambiguity or frivolous usage, this
